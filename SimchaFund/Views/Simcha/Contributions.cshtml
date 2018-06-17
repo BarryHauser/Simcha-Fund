@@ -1,0 +1,77 @@
+﻿@using SimchaFund.Data
+@using SimchaFund.Models
+@model SimchaContributersVW
+<div class="page-header text-center">
+    <h1>Contributors for the @Model.Simcha.Name simcha</h1>
+</div>
+<form method="POST">
+    <input name="simchaId" value="@Model.Simcha.Id" type="hidden">
+    <div class="col-md-8 text-center">
+        <input type="text" class="input-sm" placeholder="Search" id="search">
+        <button class="btn btn-danger" id="clear">Clear</button>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            
+                <tr>
+                    <th style="text-align:center;vertical-align:middle;">Contribute</th>
+                    <th style="text-align:center;vertical-align:middle;">Name</th>
+                    <th style="text-align:center;vertical-align:middle;">Balance</th>
+                    <th style="text-align:center;vertical-align:middle;">Always Include</th>
+                    <th style="text-align:center;vertical-align:middle;">Amount</th>
+                </tr>
+            <tbody id="my-table">
+                @for (int x = 0; x < Model.Contributers.Count; x++)
+                {
+                    var c = Model.Contributers[x];
+
+                    <tr>
+
+                        <td style="text-align:center;vertical-align:middle;">
+                            <input type="hidden" name="contributions[@x].Contribution.PersonId" value="@c.PersonWithBalance.Person.Id" />
+                            @if (c.Amount == null)
+                            {
+                                <input type="checkbox" name="contributions[@x].Included" value="True" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" name="contributions[@x].Included" value="True" checked />
+                            }
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            <span style="@(c.PersonWithBalance.Balance < 0 ? "color:red;font-weight:bolder;":"")">
+                                @c.PersonWithBalance.Person.FirstName @c.PersonWithBalance.Person.LastName
+                            </span>
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            <span style="@(c.PersonWithBalance.Balance < 0 ? "color:red;font-weight:bolder;":"")">
+                            @c.PersonWithBalance.Balance.ToString("C")
+                            </span>
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            <span style="font-size:20px;" class="@(c.PersonWithBalance.Person.AlwaysIncluded ? "glyphicon glyphicon-ok-sign":"")"></span>
+                        </td>
+                        <td style="text-align:center;vertical-align:middle;">
+                            @if (c.Amount != null)
+                            {
+                                <input name="contributions[@x].Contribution.amount" type="text" class="input-sm" value="@c.Amount.ToString()">
+                            }
+                            else
+                            {
+                                <input name="contributions[@x].Contribution.amount" type="text" class="input-sm" value="5.0">
+                            }
+                        </td>
+                    </tr>
+
+                }
+            </tbody>
+
+        </table>
+    </div>
+    <div style="text-align:center;">
+        <button class="btn-lg btn-danger">Update</button>
+    </div>
+</form>
+@section scripts{
+    <script src="~/Scripts/contributions.js"></script>
+    }
